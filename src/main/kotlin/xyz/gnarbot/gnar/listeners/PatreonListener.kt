@@ -99,7 +99,7 @@ class PatreonListener(private val bot: Bot) : ListenerAdapter() {
     }
 
     private fun createKey(): String {
-        val key = PremiumKey(UUID.randomUUID().toString(), PremiumKey.Type.PREMIUM, Duration.ofDays(365).toMillis(), false)
+        val key = PremiumKey(UUID.randomUUID().toString(), PremiumKey.Type.PREMIUM, Duration.ofDays(365).toMillis())
         key.save()
         return key.id
     }

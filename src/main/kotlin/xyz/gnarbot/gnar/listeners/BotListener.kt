@@ -10,7 +10,6 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter
 import xyz.gnarbot.gnar.Bot
 import xyz.gnarbot.gnar.BotLoader
 import xyz.gnarbot.gnar.commands.Context
-import xyz.gnarbot.gnar.utils.LogHelper
 
 import java.util.concurrent.TimeUnit
 
@@ -30,9 +29,9 @@ class BotListener(private val bot: Bot) : ListenerAdapter() {
             return
         }
 
-        if ((event.message.contentRaw.startsWith('_') && event.message.contentRaw.endsWith('_')) || (event.message.contentRaw.startsWith(BotLoader.BOT.configuration.prefix) && (event.message.contentRaw.endsWith(BotLoader.BOT.configuration.prefix))))   {
-            return
-        } //Prevent markdown responses
+//        if ((event.message.contentRaw.startsWith('_') && event.message.contentRaw.endsWith('_')) || (event.message.contentRaw.startsWith(BotLoader.BOT.configuration.prefix) && (event.message.contentRaw.endsWith(BotLoader.BOT.configuration.prefix))))   {
+//            return
+//        } //Prevent markdown responses
 
         bot.commandDispatcher.handle(Context(bot, event))
     }

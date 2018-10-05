@@ -1,26 +1,26 @@
 package xyz.gnarbot.gnar.db;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import xyz.gnarbot.gnar.Bot;
 import xyz.gnarbot.gnar.BotLoader;
 
 import javax.annotation.Nullable;
 
 import static com.rethinkdb.RethinkDB.r;
 
-public abstract class ManagedObject<T> {
-    private static final Database db = BotLoader.BOT.db();
+@JsonSerialize
+@JsonDeserialize
+public abstract class ManagedObject {
     private final String id;
     @JsonIgnore
     private final String table;
-
-    @Nullable
-    private final String userID;
 
     @JsonIgnore
     public ManagedObject(String id, String table) {
         this.id = id;
         this.table = table;
-        this.userID = null;
     }
 
     public String getId() {
@@ -29,15 +29,11 @@ public abstract class ManagedObject<T> {
 
     @JsonIgnore
     public void delete() {
-        if (db.isOpen()) r.table(table).get(id)
-                .delete()
-                .runNoReply(db.getConn());
+        BotLoader.BOT.getDb().deleteData(table, Long.valueOf(id));
     }
 
     @JsonIgnore
     public void save() {
-        if (db.isOpen()) r.table(table).insert(this)
-                .optArg("conflict", "replace")
-                .runNoReply(db.getConn());
+        BotLoader.BOT.getDb().insertData(table, Long.valueOf(id), this);
     }
 }

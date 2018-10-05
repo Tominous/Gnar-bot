@@ -49,7 +49,6 @@ public class Bot {
 
     private final Database database;
     private final DatabaseManager db;
-    private final Connection connection;
 
     private final OptionsRegistry optionsRegistry;
     private final PlayerRegistry playerRegistry;
@@ -63,7 +62,7 @@ public class Bot {
     private final ShardManager shardManager;
     private final CountUpdater countUpdater;
     private final SoundManager soundManager;
-    private final SentryUtil sentryUtil;
+    //private final SentryUtil sentryUtil;
 
     public Bot(
             Credentials credentials,
@@ -78,13 +77,8 @@ public class Bot {
         LOG.info("Initializing the Discord bot.");
 
         this.database = new Database("bot");
-        this.db = new DatabaseManager(this, "");
-        this.connection = db.establishConnection();
+        this.db = new DatabaseManager(this);
 
-        if(connection == null) {
-            LOG.error("Postgres connection failed. Make sure your information is correct.");
-            System.exit(0);
-        }
         optionsRegistry = new OptionsRegistry(this);
 
         String url = this.credentials.getWebHookURL();
@@ -141,7 +135,7 @@ public class Bot {
         commandRegistry = new CommandRegistry(this);
         commandDispatcher = new CommandDispatcher(this, commandRegistry, Executors.newWorkStealingPool());
 
-        sentryUtil = new SentryUtil(this, Objects.requireNonNull(getCredentials().getSentryPubDsn()));
+        //sentryUtil = new SentryUtil(this, Objects.requireNonNull(getCredentials().getSentryPubDsn()));
 
         LOG.info("Finish setting up bot internals.");
     }
@@ -176,10 +170,6 @@ public class Bot {
 
     public Database db() {
         return database;
-    }
-
-    public Connection getConnection() {
-        return connection;
     }
 
     public CommandRegistry getCommandRegistry() {
@@ -234,5 +224,9 @@ public class Bot {
 
     public SoundManager getSoundManager() {
         return soundManager;
+    }
+
+    public DatabaseManager getDb() {
+        return db;
     }
 }

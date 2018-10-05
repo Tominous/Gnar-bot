@@ -1,18 +1,26 @@
 package xyz.gnarbot.gnar.utils
 
+import org.slf4j.LoggerFactory
 import xyz.gnarbot.gnar.Bot
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
 
-class DatabaseManager(val bot: Bot, val mainTable: String) {
+class DatabaseManager(val bot: Bot) {
 
-    fun establishConnection() : Connection? {
+    private val LOG = LoggerFactory.getLogger("Database")
+    private val conn : Connection?
+
+    init {
+        conn = establishConnection()
+    }
+
+    private fun establishConnection() : Connection? {
         var c : Connection? = null
         try {
             Class.forName("org.postgresql.Driver")
-            c = DriverManager.getConnection(bot.credentials.databaseURL, bot.credentials.databaseUsername, bot.credentials.databasePassword)
+            c = DriverManager.getConnection("jdbc:postgresql://localhost:5432/gnar", bot.credentials.databaseUsername, bot.credentials.databasePassword)
         } catch (e: Exception) {
             e.printStackTrace()
             System.exit(0)
@@ -22,6 +30,7 @@ class DatabaseManager(val bot: Bot, val mainTable: String) {
         } else {
             return c
         }
+        System.exit(0)
         return null
     }
 
@@ -31,32 +40,33 @@ class DatabaseManager(val bot: Bot, val mainTable: String) {
 
     }
 
-    fun setGuildData(id: Int, options : HashMap<String, String>) {
+    fun setData(tableName: String,id: Long, options : HashMap<String, String>) {
         for(s: String in options.keys) {
             //UPDATE TABLE SET KEY = VALUE WHERE ID = ID
-            executeStatement("UPDATE $mainTable SET $s = ${options.getValue(s)} WHERE ID = $id")
+            executeStatement("UPDATE $tableName SET $s = ${options.getValue(s)} WHERE ID = $id")
         }
     }
 
-    fun deleteGuildData(id: Int) {
+    fun deleteData(tableName: String,id: Long) {
         //DELETE FROM TABLE WHERE ID = ID
-        executeStatement("DELETE FROM $mainTable WHERE ID = $id")
+        executeStatement("DELETE FROM $tableName WHERE ID = $id")
     }
 
-    fun selectGuildData(id: Int) : ResultSet {
+    fun selectData(tableName: String,id: Long) : ResultSet {
         //SELECT * FROM TABLE WHERE ID = ID
-        return executeStatement("SELECT * FROM $mainTable WHERE ID = $id")
+        return executeStatement("SELECT * FROM $tableName WHERE ID = $id")
     }
 
-    fun insertGuildData(id: Int, options : Array<String>) {
+    fun <T> insertData(tableName: String,id: Long, options : T) {
         //INSERT INTO TABLE VALUES (KEY, VALUE, ...)
-        executeStatement("INSERT INTO $mainTable VALUES ${options.sortedArray()} WHERE ID = $id")
+        print(options)
+        executeStatement("INSERT INTO $tableName VALUES $options WHERE ID = $id")
     }
 
     private fun executeStatement(s: String) : ResultSet {
-        val statement : Statement = bot.connection.createStatement()
+        val statement : Statement = conn!!.createStatement()
         statement.executeQuery(s)
-        bot.connection.commit()
+        conn.commit()
         return statement.resultSet
     }
 }

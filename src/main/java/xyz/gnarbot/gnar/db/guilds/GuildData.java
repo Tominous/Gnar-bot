@@ -10,6 +10,8 @@ import java.beans.ConstructorProperties;
 import java.util.HashMap;
 import java.util.Map;
 
+@JsonSerialize
+@JsonDeserialize
 public class GuildData extends ManagedObject {
 
     @JsonSerialize
@@ -27,10 +29,6 @@ public class GuildData extends ManagedObject {
     @JsonSerialize
     @JsonDeserialize(as = MusicData.class)
     private MusicData musicData;
-
-    @JsonSerialize
-    @JsonDeserialize(as = LogData.class)
-    private LogData logData;
 
     @JsonSerialize(keyAs = String.class, contentAs = Long.class)
     @JsonDeserialize(keyAs = String.class, contentAs = Long.class)
@@ -107,17 +105,10 @@ public class GuildData extends ManagedObject {
         return roleData;
     }
 
-    @JsonIgnore
-    public LogData getLog() {
-        if (logData == null) logData = new LogData();
-        return logData;
-    }
-
     public void reset() {
         commandData = null;
         ignoredData = null;
         musicData = null;
         roleData = null;
-        logData = null;
     }
 }

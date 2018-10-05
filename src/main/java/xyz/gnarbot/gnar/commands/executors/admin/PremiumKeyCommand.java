@@ -24,7 +24,7 @@ import java.util.UUID;
 )
 public class PremiumKeyCommand extends CommandTemplate {
     @Description("Generate a premium key.")
-    public void gen(Context context, int number, PremiumKey.Type type, String durationTxt, boolean override) {
+    public void gen(Context context, int number, PremiumKey.Type type, String durationTxt) {
         long duration = Utils.parseTime(durationTxt);
 
         if (duration < 0) {
@@ -34,7 +34,7 @@ public class PremiumKeyCommand extends CommandTemplate {
 
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < number; i++) {
-            PremiumKey key = new PremiumKey(UUID.randomUUID().toString(), type, duration, override);
+            PremiumKey key = new PremiumKey(UUID.randomUUID().toString(), type, duration);
             builder.append(key.getId()).append('\n');
             key.save();
         }

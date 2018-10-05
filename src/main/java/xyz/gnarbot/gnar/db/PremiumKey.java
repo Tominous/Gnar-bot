@@ -24,15 +24,13 @@ public class PremiumKey extends ManagedObject {
 
     private final long duration;
     private final Type type;
-    private final boolean override;
     private Redeemer redeemer;
 
     @ConstructorProperties({"id", "type", "duration", "override"})
-    public PremiumKey(String id, Type type, long duration, boolean override) {
+    public PremiumKey(String id, Type type, long duration) {
         super(id, "keys");
         this.type = type;
         this.duration = duration;
-        this.override = override;
     }
 
     public Type getType() {
@@ -41,10 +39,6 @@ public class PremiumKey extends ManagedObject {
 
     public long getDuration() {
         return duration;
-    }
-
-    public boolean isOverride() {
-        return override;
     }
 
     public PremiumKey setRedeemer(Redeemer redeemer) {
