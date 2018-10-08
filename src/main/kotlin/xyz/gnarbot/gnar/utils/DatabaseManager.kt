@@ -6,6 +6,9 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.ResultSet
 import java.sql.Statement
+import com.google.gson.Gson
+
+
 
 class DatabaseManager(val bot: Bot) {
 
@@ -36,37 +39,49 @@ class DatabaseManager(val bot: Bot) {
 
     fun createTable(tableName: String, options: Array<String>) {
         //CREATE TABLE TABLENAME (OPTIONS)
-        executeStatement("CREATE TABLE $tableName VALUES (${options.sortedArray()})")
+        executeUpdate("CREATE TABLE $tableName VALUES (${options.sortedArray()})")
 
     }
 
     fun setData(tableName: String,id: Long, options : HashMap<String, String>) {
         for(s: String in options.keys) {
             //UPDATE TABLE SET KEY = VALUE WHERE ID = ID
-            executeStatement("UPDATE $tableName SET $s = ${options.getValue(s)} WHERE ID = $id")
+            executeUpdate("UPDATE $tableName SET $s = ${options.getValue(s)} WHERE ID = $id")
         }
     }
 
     fun deleteData(tableName: String,id: Long) {
         //DELETE FROM TABLE WHERE ID = ID
-        executeStatement("DELETE FROM $tableName WHERE ID = $id")
+        executeUpdate("DELETE FROM $tableName WHERE ID = $id")
     }
 
-    fun selectData(tableName: String,id: Long) : ResultSet {
+    fun selectData(tableName: String,id: Long) : ResultSet? {
         //SELECT * FROM TABLE WHERE ID = ID
-        return executeStatement("SELECT * FROM $tableName WHERE ID = $id")
+        return executeQuery("SELECT * FROM $tableName WHERE ID = $id")
     }
 
     fun <T> insertData(tableName: String,id: Long, options : T) {
         //INSERT INTO TABLE VALUES (KEY, VALUE, ...)
-        print(options)
-        executeStatement("INSERT INTO $tableName VALUES $options WHERE ID = $id")
+        val gson = Gson()
+        val json = gson.toJson(options) //convert
+        println(json)
+        println("INSERT INTO $tableName (id, dataObject) VALUES (dataObject = '$json') WHERE ID = $id")
+        executeUpdate("INSERT INTO $tableName (id, dataobject) VALUES ($id, '$json')")
     }
 
-    private fun executeStatement(s: String) : ResultSet {
+    private fun executeUpdate(s: String) : ResultSet? {
+        val statement : Statement = conn!!.createStatement()
+        statement.executeUpdate(s)
+        return if (statement.resultSet == null ) statement.resultSet else null
+    }
+
+    private fun executeQuery(s: String) : ResultSet? {
         val statement : Statement = conn!!.createStatement()
         statement.executeQuery(s)
-        conn.commit()
-        return statement.resultSet
+        return if (statement.resultSet == null ) statement.resultSet else null
+    }
+
+    fun checkIfExists(id: String, table: String) : Boolean {
+        return executeQuery("SELECT * FROM $table WHERE ID = $id") == null
     }
 }
