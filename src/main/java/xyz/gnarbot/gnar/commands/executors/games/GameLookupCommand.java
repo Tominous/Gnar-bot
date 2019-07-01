@@ -86,7 +86,7 @@ public class GameLookupCommand extends CommandExecutor {
                 }
             });
 
-//            JSONArray jsa = response.getBody().getArray();
+            JSONArray jsa = response.getBody().getArray();
 
 
         } catch (Exception e) {
