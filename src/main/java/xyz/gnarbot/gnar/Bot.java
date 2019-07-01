@@ -55,7 +55,7 @@ public class Bot {
     private final PlayerRegistry playerRegistry;
     private final MyAnimeListAPI myAnimeListAPI;
     private final RiotApi riotApi;
-    //private final DiscordFM discordFM;
+    private final DiscordFM discordFM;
     private final PatreonAPI patreon;
     private final CommandRegistry commandRegistry;
     private final CommandDispatcher commandDispatcher;
@@ -125,7 +125,7 @@ public class Bot {
         if (configuration.getMusicEnabled()) {
             soundManager.loadSounds();
             // SETUP APIs
-            //discordFM = new DiscordFM(this);
+            discordFM = new DiscordFM(this);
             LOG.info("DiscordFM is temporarily disabled due to moving serves.");
 
         }
@@ -170,9 +170,9 @@ public class Bot {
         return myAnimeListAPI;
     }
 
-    //public DiscordFM getDiscordFM() {
-    //    return discordFM;
-    //}
+    public DiscordFM getDiscordFM() {
+        return discordFM;
+    }
 
     public Database db() {
         return database;
