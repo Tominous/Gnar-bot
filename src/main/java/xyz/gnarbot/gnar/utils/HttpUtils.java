@@ -9,7 +9,7 @@ public class HttpUtils {
     public static final OkHttpClient CLIENT = new OkHttpClient.Builder().build();
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    //public static final MediaType TEXT = MediaType.parse("text/plain; charset=utf-8");
+    public static final MediaType TEXT = MediaType.parse("text/plain; charset=utf-8");
 
     public static final Callback EMPTY_CALLBACK = new Callback() {
         @Override
